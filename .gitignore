@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Django
+*.sqlite3
+*.log
+media/
+*.pot
+
+#logs
+*.log
+logs/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos sensibles
+.env
+local_settings.py
+
+# Herramientas de análisis o pruebas
+.mypy_cache/
+.pyright/
+.pylint.d/
+htmlcov/
+.coverage
+*.cover
+coverage.xml
+
+# IDEs
+.vscode/
+.idea/
