@@ -10,10 +10,10 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['username', 'email', 'password', 'password2', 'bio', 'birth_date', 'avatar']
 
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+    def validate(self, data):
+        if data['password'] != data['password2']:
             raise serializers.ValidationError({"password": "Las contraseñas no coinciden"})
-        return attrs
+        return data
     
     def create(self, validated_data):
         validated_data.pop('password2')
