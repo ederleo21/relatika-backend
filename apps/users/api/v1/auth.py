@@ -44,7 +44,7 @@ class CustomTokenRefreshView(APIView):
             return Response({"detail": "Invalid or expired refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class RegisterUserListCreateView(generics.ListCreateAPIView):
+class RegisterUserCreateView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterUserSerializer
     permission_classes = [AllowAny]
