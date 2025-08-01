@@ -1,5 +1,6 @@
 from rest_framework import generics, status
 from rest_framework.views import APIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -43,8 +44,13 @@ class CustomTokenRefreshView(APIView):
         except Exception:
             return Response({"detail": "Invalid or expired refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
 
-
 class RegisterUserCreateView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterUserSerializer
     permission_classes = [AllowAny]
+
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response(status=status.HTTP_200_OK)
+        response.delete_cookie('refresh_token')
+        return response
