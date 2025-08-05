@@ -43,7 +43,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -53,8 +53,8 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', #Antes que common
     'django.middleware.common.CommonMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -128,13 +128,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 #CORS CONFIGURATION
+#Permitir que las cookies viajen entre el frontend y backend
+CORS_ALLOW_CREDENTIALS = True
+
 #Permitir peticiones desde estos origenes
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", 
 ]
-
-#Permitir que las cookies viajen entre el frontend y backend
-CORS_ALLOW_CREDENTIALS = True
 
 #Confiar en peticiones con cookies que vengan de estos origenes:
 CSRF_TRUSTED_ORIGINS = [
