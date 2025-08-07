@@ -5,8 +5,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 
 from .serializers import RegisterUserSerializer
 from apps.users.models import CustomUser
@@ -49,17 +47,24 @@ class CustomTokenRefreshView(APIView):
             return Response({"detail": "Invalid or expired refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response({"detail": "Logout successful"}, status=status.HTTP_200_OK)
+        #No eliminarla, reemplazar la cookie por una expirada.
+        response.set_cookie(
+            key='refresh_token',
+            value='',
+            max_age=0,
+            expires='Thu, 01 Jan 1970 00:00:00 GMT',
+            path='/api/v1/users/refresh/',
+            secure=True,
+            httponly=True,
+            samesite='None',
+        )
+        return response
+    
+
 class RegisterUserCreateView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterUserSerializer
     permission_classes = [AllowAny]
-
-
-class LogoutView(APIView):
-    def post(self, request):
-        response = Response(status=status.HTTP_200_OK)
-        response.delete_cookie(
-            key='refresh_token',
-            path='/api/v1/users/refresh/',
-        )
-        return response
