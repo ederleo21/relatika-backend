@@ -23,6 +23,7 @@ DJANGO_APPS = [
 
 PROJECT_APPS = [
     'apps.users',
+    'apps.posts',
 ]
 
 THIRD_APPS = [
