@@ -12,7 +12,7 @@ class PostCreateListView(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Post.objects.filter(user=2)
+        return Post.objects.filter(pk=1)
 
     def post(self, request, *args, **kwargs):
         try:
@@ -28,4 +28,4 @@ class PostCreateListView(generics.ListCreateAPIView):
                 return Response(post_serializer.data, status=status.HTTP_201_CREATED)
             
         except Exception as e:
-            return Response({ "error": str(e) }, status.HTTP_400_BAD_REQUEST)
+            return Response({ "error": str(e) }, status.HTTP_400_BAD_REQUEST) 
