@@ -22,6 +22,7 @@ DJANGO_APPS = [
 ]
 
 PROJECT_APPS = [
+    'apps.accounts',
     'apps.users',
     'apps.posts',
 ]

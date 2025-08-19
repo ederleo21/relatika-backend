@@ -1,10 +1,10 @@
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from .serializers import RegisterUserSerializer
+from .serializers import UserSerializer
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
-    serializer_class = RegisterUserSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):

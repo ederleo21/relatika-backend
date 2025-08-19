@@ -22,7 +22,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 httponly=True,
                 secure=True, # Importante
                 samesite='None', #Importante si es conexion de front con back
-                path='/api/v1/users/refresh/', #Solo a este path se enviará la cookie con el refresh
+                path='/api/v1/auth/refresh/', #Solo a este path se enviará la cookie con el refresh
                 max_age=60*60*24
             )
             del response.data['refresh']
@@ -56,7 +56,7 @@ class LogoutView(APIView):
             value='',
             max_age=0,
             expires='Thu, 01 Jan 1970 00:00:00 GMT',
-            path='/api/v1/users/refresh/',
+            path='/api/v1/auth/refresh/',
             secure=True,
             httponly=True,
             samesite='None',
