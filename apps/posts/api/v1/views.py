@@ -4,22 +4,21 @@ from rest_framework.response import Response
 from rest_framework import status
 from apps.posts.models import Post, PostImage
 from .serializers import PostSerializer, PostImageSerializer
+
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.db import transaction
 
 class PostCreateListView(generics.ListCreateAPIView):
+    queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [AllowAny]
-
-    def get_queryset(self):
-        return Post.objects.filter(pk=1)
 
     def post(self, request, *args, **kwargs):
         try:
             with transaction.atomic():
                 post_serializer = self.get_serializer(data=request.data)
                 post_serializer.is_valid(raise_exception=True)
-                post = post_serializer.save()
+                post = post_serializer.save(user=request.user)
 
                 images_list = request.FILES.getlist('images')
                 for img in images_list:

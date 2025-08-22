@@ -4,7 +4,6 @@ from apps.posts.models import Post, PostImage
 class PostImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostImage
-        fields = ['post', 'image']
 
     def to_representation(self, instance):
         return {
@@ -12,8 +11,10 @@ class PostImageSerializer(serializers.ModelSerializer):
         }
 
 class PostSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(required=True)
+    content = serializers.CharField(required=True)
     images = PostImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
-        fields = ['user', 'title', 'content', 'images']
+        fields = ['title', 'content', 'images']

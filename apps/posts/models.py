@@ -3,7 +3,7 @@ from apps.users.models import CustomUser
 
 class Post(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='posts', verbose_name="Author user")
-    title = models.CharField(max_length=250, verbose_name="Title", blank=True, null=True)
+    title = models.CharField(max_length=250, verbose_name="Title")
     content = models.TextField(verbose_name="post content")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
