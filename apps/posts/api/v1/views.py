@@ -1,19 +1,24 @@
-from rest_framework import generics
-from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import status
-from apps.posts.models import Post, PostImage
-from .serializers import PostSerializer, PostImageSerializer
-
-from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.db import transaction
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
+
+from utils.pagination import TwentyResultsSetPagination
+from apps.posts.models import Post, PostImage
+from .serializers import PostSerializer
 
 class PostCreateListView(generics.ListCreateAPIView):
-    queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [AllowAny]
+    pagination_class = TwentyResultsSetPagination
 
-    def post(self, request, *args, **kwargs):
+    def get_queryset(self):
+        user_pk = self.kwargs.get('pk')
+        if user_pk:
+            return Post.objects.filter(user__id=user_pk)
+        return Post.objects.all()
+
+    def create(self, request, *args, **kwargs):
         try:
             with transaction.atomic():
                 post_serializer = self.get_serializer(data=request.data)
