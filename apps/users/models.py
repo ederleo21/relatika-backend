@@ -22,10 +22,12 @@ class Follow(models.Model):
 
     class Meta:
         unique_together = ("follower", "following")
-        indexes = [
-            models.Index(fields=["follower"]),
-            models.Index(fields=["following"])
-        ]
+        indexes = [models.Index(fields=["follower"]), models.Index(fields=["following"])]
 
     def __str__(self):
         return f"{self.follower.username} -> {self.following.username}"
+
+    def save(self, *args, **kwargs):
+        if self.follower_id == self.following_id:
+            raise ValueError("Un usuario no puede seguirse a sí mismo")
+        super().save(*args, **kwargs)
