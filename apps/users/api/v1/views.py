@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from apps.users.models import CustomUser, Follow
 
-from .serializers import UserSerializer, UserProfileSerializer
+from .serializers import UserSerializer, UserProfileSerializer, FeaturedFriendsSerializers
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
@@ -52,11 +52,26 @@ class FollowUserAPIView(APIView):
             return Response({"error": "Tú no sigues a este usuario"}, status=status.HTTP_404_NOT_FOUND)
 
 
-class pruebas(APIView):
+class FollowerList(APIView):
 
-    def get(self, request):
-        user = CustomUser.objects.get(pk=25)
-        siguiendo = user.followers.all()
-        print(siguiendo)
-        return Response({""})
+    def get(self, request, pk):
+        user = CustomUser.objects.filter(id=pk).first()
+        if not user:
+            return Response({"error": "El usuario no existe"}, status=status.HTTP_404_NOT_FOUND)
+        
+        followers = CustomUser.objects.filter(id__in=user.followers.values_list("follower_id", flat=True))
+        followers_serializer = FeaturedFriendsSerializers(followers, many=True, context={'request': request})
+        return Response(followers_serializer.data, status=status.HTTP_200_OK)
+    
+
+class FollowingList(APIView):
+
+    def get(self, request, pk):
+        user = CustomUser.objects.filter(id=pk).first()
+        if not user:
+            return Response({"error": "El usuario no existe"}, status=status.HTTP_404_NOT_FOUND)
+        
+        following = CustomUser.objects.filter(id__in=user.following.values_list("following_id", flat=True))
+        following_serializer = FeaturedFriendsSerializers(following, many=True, context={'request': request})
+        return Response(following_serializer.data, status=status.HTTP_200_OK)
     
