@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
@@ -5,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from apps.users.models import CustomUser, Follow
 
-from .serializers import UserSerializer, UserProfileSerializer, FeaturedFriendsSerializers
+from .serializers import UserSerializer, UserProfileSerializer, UserMiniSerializer
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
@@ -60,7 +61,7 @@ class FollowerList(APIView):
             return Response({"error": "El usuario no existe"}, status=status.HTTP_404_NOT_FOUND)
         
         followers = CustomUser.objects.filter(id__in=user.followers.values_list("follower_id", flat=True))
-        followers_serializer = FeaturedFriendsSerializers(followers, many=True, context={'request': request})
+        followers_serializer = UserMiniSerializer(followers, many=True, context={'request': request})
         return Response(followers_serializer.data, status=status.HTTP_200_OK)
     
 
@@ -72,6 +73,46 @@ class FollowingList(APIView):
             return Response({"error": "El usuario no existe"}, status=status.HTTP_404_NOT_FOUND)
         
         following = CustomUser.objects.filter(id__in=user.following.values_list("following_id", flat=True))
-        following_serializer = FeaturedFriendsSerializers(following, many=True, context={'request': request})
+        following_serializer = UserMiniSerializer(following, many=True, context={'request': request})
         return Response(following_serializer.data, status=status.HTTP_200_OK)
     
+
+class UserSearchAPIView(APIView):
+
+    def get(self, request):
+        query = request.GET.get("q", "").strip()
+        if not query:
+            return Response([])
+        
+        users = CustomUser.objects.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) 
+        ).order_by("username")[:5]
+
+        serializer = UserMiniSerializer(users, many=True, context={"request": request})
+        return Response(serializer.data)
+
+
+class SearchResultsAPIView(APIView):
+
+    def get(self, request):
+        query = request.GET.get("q", "").strip()
+        category = request.GET.get("category", "users")
+
+        if not query:
+            return Response([])
+        
+        results = None
+        if category == "users":
+            users = CustomUser.objects.filter(Q(username__icontains=query) | Q(first_name__icontains=query) | Q(last_name__icontains=query) ).order_by("username")
+            results = UserMiniSerializer(users, many=True, context={"request": request})
+        
+        elif category == "posts":
+            #traer posts por la query
+            pass
+        
+        if results is not None:
+            return Response(results.data, status=status.HTTP_200_OK)
+
+        return Response({"error": "Categoria inválida"}, status=status.HTTP_400_BAD_REQUEST)

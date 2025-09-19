@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from apps.users.models import CustomUser
 
-class FeaturedFriendsSerializers(serializers.ModelSerializer):
+class UserMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'first_name', 'username', 'avatar']
+        fields = ['id', 'first_name', "last_name", 'username', 'avatar']
 
 
 #Serializers base con campos para perfil y usuarios normales. 
@@ -22,7 +22,7 @@ class UserBaseSerializer(serializers.ModelSerializer):
     def get_featured_friends(self, obj):
         last_follows = obj.following.order_by('-created_at')[:5]
         friends = [follow.following for follow in last_follows] 
-        return FeaturedFriendsSerializers(friends, many=True, context=self.context).data
+        return UserMiniSerializer(friends, many=True, context=self.context).data
 
     def get_followers_count(self, obj):
         return obj.followers.count()
