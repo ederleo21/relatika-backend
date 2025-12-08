@@ -14,7 +14,6 @@ class Post(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-
 class PostImage(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images', verbose_name="Post")
     image = models.ImageField(upload_to="posts/images/", verbose_name="Post image")

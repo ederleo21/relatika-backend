@@ -77,6 +77,7 @@ class FollowingList(APIView):
         return Response(following_serializer.data, status=status.HTTP_200_OK)
     
 
+# Traer usuarios para el input search dinamico
 class UserSearchAPIView(APIView):
 
     def get(self, request):
@@ -94,6 +95,7 @@ class UserSearchAPIView(APIView):
         return Response(serializer.data)
 
 
+# Traer todos los usuarios de acuerdo a la busqueda
 class SearchResultsAPIView(APIView):
 
     def get(self, request):
@@ -109,7 +111,6 @@ class SearchResultsAPIView(APIView):
             results = UserMiniSerializer(users, many=True, context={"request": request})
         
         elif category == "posts":
-            #traer posts por la query
             pass
         
         if results is not None:

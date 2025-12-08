@@ -9,14 +9,22 @@ from .serializers import PostSerializer
 
 class PostCreateListView(generics.ListCreateAPIView):
     serializer_class = PostSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     pagination_class = TwentyResultsSetPagination
 
     def get_queryset(self):
         user_pk = self.kwargs.get('pk')
+        #Posts of profile
         if user_pk:
-            return Post.objects.filter(user__id=user_pk)
-        return Post.objects.all()
+            return Post.objects.filter(user__id=user_pk).order_by('-created_at')
+        
+        #Posts of feed
+        user = self.request.user
+        if not user.is_authenticated:
+            return Post.objects.none()
+        
+        following_ids = user.following.values_list('following_id', flat=True)
+        return Post.objects.filter(user__id__in=following_ids).order_by('-created_at')
 
     def create(self, request, *args, **kwargs):
         try:

@@ -14,7 +14,11 @@ class PostSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True)
     content = serializers.CharField(required=True)
     images = PostImageSerializer(many=True, read_only=True)
+    username = serializers.SerializerMethodField()
+
+    def get_username(self, obj):
+        return obj.user.username
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'images']
+        fields = ['id', 'username', 'title', 'content', 'images', 'created_at']
