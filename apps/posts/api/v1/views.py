@@ -9,7 +9,7 @@ from .serializers import PostSerializer
 
 class PostCreateListView(generics.ListCreateAPIView):
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     pagination_class = TwentyResultsSetPagination
 
     def get_queryset(self):
