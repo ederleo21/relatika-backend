@@ -7,6 +7,7 @@ from utils.pagination import TwentyResultsSetPagination
 from apps.posts.models import Post, PostImage
 from .serializers import PostSerializer
 
+# Crear post y traer feed general (pk=null) o posts de un  usuario (pk=n)
 class PostCreateListView(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = [AllowAny]
@@ -41,3 +42,11 @@ class PostCreateListView(generics.ListCreateAPIView):
             
         except Exception as e:
             return Response({ "error": str(e) }, status.HTTP_400_BAD_REQUEST) 
+
+
+class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return PostSerializer.Meta.model.objects.all()
